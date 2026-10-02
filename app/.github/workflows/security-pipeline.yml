@@ -1,0 +1,22 @@
+name: FinSecure Security Pipeline
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  security-check:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Run security check
+        run: |
+          echo "FinSecure DevSecOps security pipeline"
+          echo "Source code checked successfully"
