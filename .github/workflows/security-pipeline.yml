@@ -26,7 +26,7 @@ jobs:
 
       - name: Run Semgrep SAST
         run: semgrep scan --config p/default .
-              - name: Start OWASP Juice Shop
+      - name: Start OWASP Juice Shop
         run: |
           docker run -d --name juice-shop -p 3000:3000 bkimminich/juice-shop
           
