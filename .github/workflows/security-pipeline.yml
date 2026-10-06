@@ -26,30 +26,36 @@ jobs:
 
       - name: Run Semgrep SAST
         run: semgrep scan --config p/default .
+
       - name: Start OWASP Juice Shop
         run: |
-          docker run -d --name juice-shop -p 3000:3000 bkimminich/juice-shop
-          
+          docker run -d --name juice-shop -p 3000:3000 bkimminich/juice-shop:latest
+
           echo "Waiting for Juice Shop to start..."
+
           for i in {1..30}; do
             if curl -fsS http://127.0.0.1:3000/ > /dev/null; then
               echo "Juice Shop is ready."
               break
             fi
+
+            if [ "$i" -eq 30 ]; then
+              echo "Juice Shop failed to start."
+              docker logs juice-shop
+              exit 1
+            fi
+
             sleep 2
           done
 
-           - name: Run OWASP ZAP Baseline Scan
-        continue-on-error: true
-        
+      - name: Run OWASP ZAP Baseline Scan
+        run: |
           docker run --network host \
             -v "${{ github.workspace }}:/zap/wrk/:rw" \
             ghcr.io/zaproxy/zaproxy:stable \
             zap-baseline.py \
             -t http://127.0.0.1:3000 \
-            -r zap-report.html
-
-          sudo chmod 644 zap-report.html || true
+            -r /zap/wrk/zap-report.html || true
 
       - name: Upload ZAP Report
         if: always()
@@ -57,3 +63,4 @@ jobs:
         with:
           name: zap-security-report
           path: zap-report.html
+          if-no-files-found: warn
