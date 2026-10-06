@@ -55,7 +55,7 @@ jobs:
             ghcr.io/zaproxy/zaproxy:stable \
             zap-baseline.py \
             -t http://127.0.0.1:3000 \
-            -r /zap/wrk/zap-report.html || true
+           -r zap-report.html || true
 
       - name: Upload ZAP Report
         if: always()
