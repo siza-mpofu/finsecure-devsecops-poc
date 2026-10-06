@@ -39,15 +39,17 @@ jobs:
             sleep 2
           done
 
-      - name: Run OWASP ZAP Baseline Scan
+           - name: Run OWASP ZAP Baseline Scan
         continue-on-error: true
-        run: |
+        
           docker run --network host \
             -v "${{ github.workspace }}:/zap/wrk/:rw" \
             ghcr.io/zaproxy/zaproxy:stable \
             zap-baseline.py \
             -t http://127.0.0.1:3000 \
             -r zap-report.html
+
+          sudo chmod 644 zap-report.html || true
 
       - name: Upload ZAP Report
         if: always()
