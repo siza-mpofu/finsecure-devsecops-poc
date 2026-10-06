@@ -49,18 +49,8 @@ jobs:
           done
 
       - name: Run OWASP ZAP Baseline Scan
-        run: |
-          docker run --network host \
-            -v "${{ github.workspace }}:/zap/wrk/:rw" \
-            ghcr.io/zaproxy/zaproxy:stable \
-            zap-baseline.py \
-            -t http://127.0.0.1:3000 \
-           -r zap-report.html || true
-
-      - name: Upload ZAP Report
-        if: always()
-        uses: actions/upload-artifact@v4
+        uses: zaproxy/action-baseline@v0.15.0
         with:
-          name: zap-security-report
-          path: zap-report.html
-          if-no-files-found: warn
+          target: "http://127.0.0.1:3000"
+          artifact_name: "zap-security-report"
+          fail_action: false
